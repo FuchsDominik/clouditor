@@ -595,5 +595,71 @@
         ]
       }
     }
+  },
+  {
+    "id": "NoExploitableVulnerabilityExistence",
+    "name": "No exploitable vulnerabilities",
+    "description": "This metric is used to assess if there are exploitable vulnerabilities in operating system",
+    "category": "Vulnerabilities",
+    "scale": 3,
+    "range": {
+      "minMax": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  },
+  {
+    "id": "NoConfigVulnerabilityExistence",
+    "name": "No vulnerabilities in the operating system configuration",
+    "description": "This metric is used to assess if there are vulnerabilities in the operating system configuration",
+    "category": "Vulnerabilities",
+    "scale": 3,
+    "range": {
+      "minMax": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  },
+  {
+    "id": "NoPEVulnerability",
+    "name": "No Privilege Escalation vulnerability present in the operating system",
+    "description": "This metric is used to assess if there are Privilege Escalation vulnerabilities in the operating system",
+    "category": "Vulnerabilities",
+    "scale": 3,
+    "range": {
+      "minMax": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  },
+  {
+    "id": "NoPortVulnerabilities",
+    "name": "The unessential port exposure",
+    "description": "This metric is used to assess if the oprating system opens unused or vulnerable ports",
+    "category": "Vulnerabilities",
+    "scale": 3,
+    "range": {
+      "minMax": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  },
+  {
+    "id": "PlaceholderMetric",
+    "name": "Placeholder",
+    "description": "This is a placeholder metric that stands for future to-be-implemented checks",
+    "scale": 1,
+    "range": {
+      "allowedValues": {
+        "values": [
+          true,
+          false
+        ]
+      }
+    }
   }
 ]

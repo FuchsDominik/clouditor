@@ -1,0 +1,583 @@
+[
+    {
+        "id": "CRACatalog",
+        "name": "Clouditor CRA Catalog",
+        "description": "A catalog for Cyber Resilience Act Compliance Verification",
+        "metadata": {
+            "color": "#007FC3"
+        },
+        "short_name": "CRA",
+        "assurance_levels": [
+            "substantial",
+            "high"
+        ],
+        "all_in_scope": true,
+        "categories": [
+            {
+                "name": "Cybersecurity and Resilience Fundamentals",
+                "description": "Secure the security and resilience related features of the operating system",
+                "controls": [
+                    {
+                        "id": "Res-Fund-01",
+                        "name": "Security related requirements",
+                        "description": "Security requirements relating to the properties of products with digital elements",
+                        "controls": [
+                            {
+                                "id": "Res-Fund-01.1",
+                                "description": "The operating system should be published without known exploitable vulnerabilities",
+                                "metrics": [
+                                    {
+                                        "id": "NoExploitableVulnerabilityExistence"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.2",
+                                "description": "The operating system should not have vulnerabilities in the standard configuration",
+                                "metrics": [
+                                    {
+                                        "id": "NoConfigVulnerabilityExistence"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.3",
+                                "description": "The operating system should not have Privilege Escalation vulnerabilities",
+                                "metrics": [
+                                    {
+                                        "id": "NoPEVulnerability"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.4",
+                                "description": "The operating system should not have Privilege Escalation vulnerabilities",
+                                "metrics": [
+                                    {
+                                        "id": "NoPEVulnerability"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.5",
+                                "description": "The operating system shall enable at rest encryption.",
+                                "metrics": [
+                                    {
+                                        "id": "AtRestEncryptionEnabled"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.6",
+                                "description": "The operating system shall use state-of-the-art encryption algorithms for data at rest.",
+                                "metrics": [
+                                    {
+                                        "id": "AtRestEncryptionAlgorithm"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.7",
+                                "description": "The operating system shall use an up-to-date TLS protocol in all data transmissions",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionProtocol"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.8",
+                                "description": "The operating system shall enable encryption in all data transmissions",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionEnabled"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "Res-Fund-01.9",
+                                "description": "The operating system shall not open ports that are not essential for basic system functionality or are vulnerable ",
+                                "metrics": [
+                                    {
+                                        "id": "NoPortVulnerabilities"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Ongoing Security and Incident Monitoring",
+                "description": "Ensure a proper system monitoring for improved security-related transparency",
+                "controls": [
+                    {
+                        "id": "SecMon-01",
+                        "name": "monitoring of security-related controls",
+                        "description": "Provide monitoring of important security-related controls",
+                        "controls": [
+                            {
+                                "id": "SecMon-01.1",
+                                "description": "An operating system shall have automatic security updates.",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionProtocol"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "SecMon-01.2",
+                                "description": "An operating system shall provide security related information by recording and/or monitoring relevant internal activity.",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionEnforced"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "SecMon-01.3",
+                                "description": "An operating system shall report on unauthorized access.",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionEnabled"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "SecMon-01.4",
+                                "description": "An operating system shall report on corrupted data.",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionEnabled"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "SecMon-01.5",
+                                "description": "An operating system shall identify and document vulnerabilities and components contained in the product.",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionEnabled"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "SecMon-01.6",
+                                "description": "An operating system shall apply effective and regular tests and reviews of the security of the product.",
+                                "metrics": [
+                                    {
+                                        "id": "TransportEncryptionEnabled"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "User Control",
+                "description": "Required functionalities so the user can handle security related aspects better.",
+                "controls": [
+                    {
+                        "id": "FR-01",
+                        "name": "Functional Requirements",
+                        "description": "Functional requirements for the operating system.",
+                        "controls": [
+                            {
+                                "id": "FR-01.1",
+                                "description": "An operating system shall give the possibility to reset the product's configuration to a secure base state.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "FR-01.2",
+                                "description": "An operating system shall give an easy opt-out of automated security updates.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "FR-01.3",
+                                "description": "An operating system shall give an option to temporarily postpone automatic security updates.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "FR-01.4",
+                                "description": "An operating system shall give the possibility to opt-out of automatic security related monitoring and logging.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "FR-01.5",
+                                "description": "An operating system shall give the possibility to securely and permanently remove user data and settings.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Accompanying Documentation",
+                "description": "Documentation accompanying the product for easy and direct user support.",
+                "controls": [
+                    {
+                        "id": "AccDoc-01",
+                        "name": "Accompanying Documentation requirements",
+                        "description": "The accompanying documentation should have a specific content.",
+                        "controls": [
+                            {
+                                "id": "AccDoc-01.1",
+                                "description": "The accompanying documentation should include the name, registered trade name or registered trade mark of the manufacturer, the postal address or other digital contact as well as, where available the website at which the manufacturer can be contacted.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-01.2",
+                                "description": "The accompanying documentation should a single point of contact for vulnerability receipt or publication as well as the manufacturer's vulnerability disclosure contact.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-01.3",
+                                "description": "The accompanying documentation should include name and type of the product for unique identification.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-01.4",
+                                "description": "The accompanying documentation should the include intended purpose of the product and essential functionalities and information about the security properties.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-01.5",
+                                "description": "The accompanying documentation should include any known or foreseeable circumstance, related to the use of the product in accordance with its intended purpose or under conditions of reasonably foreseeable misuse, which may lead to significant cybersecurity risks.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-01.6",
+                                "description": "The accompanying documentation should include the EU declaration of conformity or a simplified version of it containing the internet address on where to access the full version.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-01.7",
+                                "description": "The accompanying documentation should include information about the extend of the (security related) support.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "AccDoc-02",
+                        "name": "Instruction reference",
+                        "description": "The accompanying documentation should include instructions or an internet address on where to find information about how to perform particular tasks.",
+                        "controls": [
+                            {
+                                "id": "AccDoc-02.1",
+                                "description": "Necessary measures during initial commissioning and throughout the lifetime of the product to ensure its secure use.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-02.2",
+                                "description": "How changes to the product can affect the security of data.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-02.3",
+                                "description": "How security-relevant updates can be installed.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-02.4",
+                                "description": "Secure decommissioning of the product.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-02.5",
+                                "description": "How the default setting enabling the automatic installation of security updates can be turned off.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            },
+                            {
+                                "id": "AccDoc-02.6",
+                                "description": "Where the product is intended for integration into other products with digital elements, the information necessary for the integrator to comply with the essential requirements of this Regulation.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "high"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "Technical Documentation",
+                "description": "Technical Documentation which should provide deeper insights into the operating system('s security).",
+                "controls": [
+                    {
+                        "id": "TD-01",
+                        "name": "Technical Documentation",
+                        "description": "Required content of the techncial documentation.",
+                        "controls": [
+                            {
+                                "id": "TD-01.1",
+                                "description": "The technical documentation should include a general product description, including the product's purpose, software versions for compliance, hardware visuals, and user instructions.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "TD-01.2",
+                                "description": "The technical documentation should include a design and process overview, detailing the design, development, vulnerability management, production, and monitoring processes.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "TD-01.3",
+                                "description": "The technical documentation should include a cybersecurity risk assessment, evaluating cybersecurity risks and compliance with essential requirements.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "TD-01.4",
+                                "description": "The technical documentation should include information about the determination of the support period.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "TD-01.5",
+                                "description": "The technical documentation should include standards and solutions, listing applied standards, specifications, or cybersecurity certifications, including alternative solutions for non-applied standards.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "TD-01.6",
+                                "description": "The technical documentation should include conformity testing reports, documenting tests for product conformity and vulnerability management effectiveness.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "TD-01.7",
+                                "description": "The technical documentation should include a copy of the EU Declaration of Conformity.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "EU declaration of conformity",
+                "description": "The EU declaration of conformity required declared in an official way that the operating system is compliant to the requirements set out in the Cyber Resilience Act.",
+                "controls": [
+                    {
+                        "id": "DoC-01",
+                        "name": "EU declaration of conformity content",
+                        "description": "Required content of the declaration of conformity.",
+                        "controls": [
+                            {
+                                "id": "DoC-01.1",
+                                "description": "Name and type and any additional information enabling the unique identification of the product.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.2",
+                                "description": "Name and address of the manufacturer or his authorised representative.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.3",
+                                "description": "A statement that the EU declaration of conformity is issued under the sole responsibility of the provider.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.4",
+                                "description": "Object of the declaration (identification of the product allowing traceability. It may include a photograph, where appropriate).",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.5",
+                                "description": "A statement that the object of the declaration described above is in conformity with the relevant Union harmonisation legislation.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.6",
+                                "description": "References to any relevant harmonised standards used or any other common specification or cybersecurity certification in relation to which conformity is declared.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.7",
+                                "description": "Where applicable, the name and number of the notified body, a description of the conformity assessment procedure performed and identification of the certificate issued.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            },
+                            {
+                                "id": "DoC-01.8",
+                                "description": "Additional information about the signature in the name of the institution/manufacturer, the date and the place of issue as well as the signature of the issuing person and the person's function.",
+                                "metrics": [
+                                    {
+                                        "id": "PlaceholderMetric"
+                                    }
+                                ],
+                                "assurance_level": "substantial"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
