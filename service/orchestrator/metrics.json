@@ -597,54 +597,62 @@
     }
   },
   {
-    "id": "NoExploitableVulnerabilityExistence",
-    "name": "No exploitable vulnerabilities",
-    "description": "This metric is used to assess if there are exploitable vulnerabilities in operating system",
+    "id": "NoExploitableVulnerabilities",
+    "name": "No known exploitable vulnerabilities",
+    "description": "This metric is used to assess if there are known exploitable vulnerabilities in the operating system",
     "category": "Vulnerabilities",
-    "scale": 3,
+    "scale": 1,
     "range": {
-      "minMax": {
-        "min": 0,
-        "max": 1
+      "allowedValues": {
+        "values": [
+          false,
+          true
+        ]
       }
     }
   },
   {
-    "id": "NoConfigVulnerabilityExistence",
+    "id": "NoConfigVulnerabilities",
     "name": "No vulnerabilities in the operating system configuration",
     "description": "This metric is used to assess if there are vulnerabilities in the operating system configuration",
     "category": "Vulnerabilities",
-    "scale": 3,
+    "scale": 1,
     "range": {
-      "minMax": {
-        "min": 0,
-        "max": 1
+      "allowedValues": {
+        "values": [
+          false,
+          true
+        ]
       }
     }
   },
   {
-    "id": "NoPEVulnerability",
-    "name": "No Privilege Escalation vulnerability present in the operating system",
+    "id": "NoPEVulnerabilities",
+    "name": "No Privilege Escalation vulnerabilities present in the operating system",
     "description": "This metric is used to assess if there are Privilege Escalation vulnerabilities in the operating system",
     "category": "Vulnerabilities",
-    "scale": 3,
+    "scale": 1,
     "range": {
-      "minMax": {
-        "min": 0,
-        "max": 1
+      "allowedValues": {
+        "values": [
+          false,
+          true
+        ]
       }
     }
   },
   {
     "id": "NoPortVulnerabilities",
-    "name": "The unessential port exposure",
-    "description": "This metric is used to assess if the oprating system opens unused or vulnerable ports",
+    "name": "No unessential port exposure",
+    "description": "This metric is used to assess if the operating system opens unused or vulnerable ports",
     "category": "Vulnerabilities",
-    "scale": 3,
+    "scale": 1,
     "range": {
-      "minMax": {
-        "min": 0,
-        "max": 1
+      "allowedValues": {
+        "values": [
+          false,
+          true
+        ]
       }
     }
   },

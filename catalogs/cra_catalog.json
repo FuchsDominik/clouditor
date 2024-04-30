@@ -27,7 +27,7 @@
                                 "description": "The operating system should be published without known exploitable vulnerabilities",
                                 "metrics": [
                                     {
-                                        "id": "NoExploitableVulnerabilityExistence"
+                                        "id": "NoExploitableVulnerabilities"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -37,7 +37,7 @@
                                 "description": "The operating system should not have vulnerabilities in the standard configuration",
                                 "metrics": [
                                     {
-                                        "id": "NoConfigVulnerabilityExistence"
+                                        "id": "NoConfigVulnerabilities"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -47,7 +47,7 @@
                                 "description": "The operating system should not have Privilege Escalation vulnerabilities",
                                 "metrics": [
                                     {
-                                        "id": "NoPEVulnerability"
+                                        "id": "NoPEVulnerabilities"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -57,7 +57,7 @@
                                 "description": "The operating system should not have Privilege Escalation vulnerabilities",
                                 "metrics": [
                                     {
-                                        "id": "NoPEVulnerability"
+                                        "id": "NoPEVulnerabilities"
                                     }
                                 ],
                                 "assurance_level": "substantial"
