@@ -26,13 +26,12 @@
 package csaf
 
 import (
-	"fmt"
 	"net/http"
 
 	"clouditor.io/clouditor/v2/api/discovery"
 	"clouditor.io/clouditor/v2/api/ontology"
+	"clouditor.io/clouditor/v2/internal/config"
 
-	"github.com/csaf-poc/csaf_distribution/v3/csaf"
 	"github.com/sirupsen/logrus"
 )
 
@@ -64,8 +63,8 @@ func WithCloudServiceID(csID string) DiscoveryOption {
 
 func NewTrustedProviderDiscovery(opts ...DiscoveryOption) discovery.Discoverer {
 	d := &csafDiscovery{
-		csID:   discovery.DefaultCloudServiceID,
-		domain: "wid.cert-bund.de",
+		csID:   config.DefaultCloudServiceID,
+		domain: "clouditor.io",
 		client: http.DefaultClient,
 	}
 
@@ -90,17 +89,7 @@ func (d *csafDiscovery) CloudServiceID() string {
 }
 
 func (d *csafDiscovery) List() (list []ontology.IsResource, err error) {
-	log.Info("Fetching CSAF documents from provider")
+	log.Infof("Fetching CSAF documents from domain %s", d.domain)
 
-	loader := csaf.NewProviderMetadataLoader(d.client)
-	metadata := loader.Load(d.domain)
-	_ = metadata
-
-	if !metadata.Valid() {
-		return nil, fmt.Errorf("could not load provider-metadata.json from %s", d.domain)
-	}
-
-	// TODO: actually discover evidences in future PR
-
-	return nil, nil
+	return d.discoverProviders()
 }

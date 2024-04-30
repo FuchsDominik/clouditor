@@ -28,10 +28,12 @@ package csaf
 
 import (
 	"net/http"
+	"os"
 	"testing"
 
 	"clouditor.io/clouditor/v2/api/discovery"
 	"clouditor.io/clouditor/v2/api/ontology"
+	"clouditor.io/clouditor/v2/internal/config"
 	"clouditor.io/clouditor/v2/internal/testdata"
 	"clouditor.io/clouditor/v2/internal/testutil/assert"
 	"clouditor.io/clouditor/v2/internal/testutil/servicetest/discoverytest/csaf/providertest"
@@ -39,6 +41,78 @@ import (
 
 	"github.com/csaf-poc/csaf_distribution/v3/csaf"
 )
+
+// validAdvisory contains the structure of a valid CSAF Advisory that validates against the JSON schema
+var validAdvisory = &csaf.Advisory{
+	Document: &csaf.Document{
+		Category:    util.Ref(csaf.DocumentCategory("csaf_security_advisory")),
+		CSAFVersion: util.Ref(csaf.CSAFVersion20),
+		Title:       util.Ref("Buffer overflow in Test Product"),
+		Publisher: &csaf.DocumentPublisher{
+			Name:      util.Ref("Test Vendor"),
+			Category:  util.Ref(csaf.CSAFCategoryVendor),
+			Namespace: util.Ref("http://localhost"),
+		},
+		Tracking: &csaf.Tracking{
+			ID:                 util.Ref(csaf.TrackingID("some-id")),
+			CurrentReleaseDate: util.Ref("2020-07-01T10:09:07Z"),
+			InitialReleaseDate: util.Ref("2020-07-01T10:09:07Z"),
+			Generator: &csaf.Generator{
+				Date: util.Ref("2020-07-01T10:09:07Z"),
+				Engine: &csaf.Engine{
+					Name:    util.Ref("test"),
+					Version: util.Ref("1.0"),
+				},
+			},
+			Status:  util.Ref(csaf.CSAFTrackingStatusFinal),
+			Version: util.Ref(csaf.RevisionNumber("1")),
+			RevisionHistory: csaf.Revisions{
+				&csaf.Revision{
+					Date:    util.Ref("2020-07-01T10:09:07Z"),
+					Number:  util.Ref(csaf.RevisionNumber("1")),
+					Summary: util.Ref("First and final version"),
+				},
+			},
+		},
+	},
+	ProductTree: &csaf.ProductTree{
+		Branches: csaf.Branches{
+			&csaf.Branch{
+				Category: util.Ref(csaf.CSAFBranchCategoryVendor),
+				Name:     util.Ref("Test Vendor"),
+				Product: &csaf.FullProductName{
+					Name:      util.Ref("Test Product"),
+					ProductID: util.Ref(csaf.ProductID("CSAFPID-0001")),
+				},
+			},
+		},
+	},
+}
+
+var goodProvider *providertest.TrustedProvider
+
+func TestMain(m *testing.M) {
+	var advisories = map[csaf.TLPLabel][]*csaf.Advisory{
+		csaf.TLPLabelWhite: {
+			validAdvisory,
+		},
+	}
+
+	goodProvider = providertest.NewTrustedProvider(
+		advisories,
+		providertest.NewGoodIndexTxtWriter(),
+		func(pmd *csaf.ProviderMetadata) {
+			pmd.Publisher = &csaf.Publisher{
+				Name:      util.Ref("Test Vendor"),
+				Category:  util.Ref(csaf.CSAFCategoryVendor),
+				Namespace: util.Ref("http://localhost"),
+			}
+		})
+	defer goodProvider.Close()
+
+	code := m.Run()
+	os.Exit(code)
+}
 
 func TestNewTrustedProviderDiscovery(t *testing.T) {
 	type args struct {
@@ -53,8 +127,8 @@ func TestNewTrustedProviderDiscovery(t *testing.T) {
 			name: "Happy path",
 			args: args{},
 			want: &csafDiscovery{
-				csID:   discovery.DefaultCloudServiceID,
-				domain: "wid.cert-bund.de",
+				csID:   config.DefaultCloudServiceID,
+				domain: "clouditor.io",
 				client: http.DefaultClient,
 			},
 		},
@@ -65,7 +139,7 @@ func TestNewTrustedProviderDiscovery(t *testing.T) {
 			},
 			want: &csafDiscovery{
 				csID:   testdata.MockCloudServiceID1,
-				domain: "wid.cert-bund.de",
+				domain: "clouditor.io",
 				client: http.DefaultClient,
 			},
 		},
@@ -75,7 +149,7 @@ func TestNewTrustedProviderDiscovery(t *testing.T) {
 				opts: []DiscoveryOption{WithProviderDomain("mock")},
 			},
 			want: &csafDiscovery{
-				csID:   discovery.DefaultCloudServiceID,
+				csID:   config.DefaultCloudServiceID,
 				client: http.DefaultClient,
 				domain: "mock",
 			},
@@ -90,15 +164,6 @@ func TestNewTrustedProviderDiscovery(t *testing.T) {
 }
 
 func Test_csafDiscovery_List(t *testing.T) {
-	p := providertest.NewTrustedProvider(func(pmd *csaf.ProviderMetadata) {
-		pmd.Publisher = &csaf.Publisher{
-			Name:      util.Ref("Test Vendor"),
-			Category:  util.Ref(csaf.CSAFCategoryVendor),
-			Namespace: util.Ref("http://localhost"),
-		}
-	})
-	defer p.Close()
-
 	type fields struct {
 		domain string
 		csID   string
@@ -107,7 +172,7 @@ func Test_csafDiscovery_List(t *testing.T) {
 	tests := []struct {
 		name     string
 		fields   fields
-		wantList []ontology.IsResource
+		wantList assert.Want[[]ontology.IsResource]
 		wantErr  assert.WantErr
 	}{
 		{
@@ -115,21 +180,25 @@ func Test_csafDiscovery_List(t *testing.T) {
 			fields: fields{
 				domain: "localhost:1234",
 				client: http.DefaultClient,
-				csID:   discovery.DefaultCloudServiceID,
+				csID:   config.DefaultCloudServiceID,
 			},
 			wantErr: func(t *testing.T, err error) bool {
 				return assert.ErrorContains(t, err, "could not load provider-metadata.json")
 			},
+			wantList: assert.Empty[[]ontology.IsResource],
 		},
 		{
 			name: "happy path",
 			fields: fields{
-				domain: p.Domain(),
-				client: p.Client(),
-				csID:   discovery.DefaultCloudServiceID,
+				domain: goodProvider.Domain(),
+				client: goodProvider.Client(),
+				csID:   config.DefaultCloudServiceID,
 			},
 			wantErr: func(t *testing.T, err error) bool {
 				return assert.NoError(t, err)
+			},
+			wantList: func(t *testing.T, got []ontology.IsResource) bool {
+				return assert.NotEmpty(t, got)
 			},
 		},
 	}
@@ -142,7 +211,7 @@ func Test_csafDiscovery_List(t *testing.T) {
 			}
 			gotList, err := d.List()
 			tt.wantErr(t, err)
-			assert.Equal(t, tt.wantList, gotList)
+			tt.wantList(t, gotList)
 		})
 	}
 }

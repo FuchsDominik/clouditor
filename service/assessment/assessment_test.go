@@ -49,6 +49,7 @@ import (
 	"clouditor.io/clouditor/v2/internal/testutil/prototest"
 	"clouditor.io/clouditor/v2/internal/testutil/servicetest"
 	"clouditor.io/clouditor/v2/internal/testutil/servicetest/evidencetest"
+	"clouditor.io/clouditor/v2/launcher"
 	"clouditor.io/clouditor/v2/policies"
 	"clouditor.io/clouditor/v2/service"
 
@@ -83,7 +84,7 @@ func TestMain(m *testing.M) {
 // TestNewService is a simply test for NewService
 func TestNewService(t *testing.T) {
 	type args struct {
-		opts []service.Option[Service]
+		opts []service.Option[*Service]
 	}
 	tests := []struct {
 		name string
@@ -93,7 +94,7 @@ func TestNewService(t *testing.T) {
 		{
 			name: "AssessmentServer created with option rego package name",
 			args: args{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithRegoPackageName("testPkg"),
 				},
 			},
@@ -104,7 +105,7 @@ func TestNewService(t *testing.T) {
 		{
 			name: "AssessmentServer created with option authorizer",
 			args: args{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithAuthorizer(api.NewOAuthAuthorizerFromClientCredentials(&clientcredentials.Config{})),
 				},
 			},
@@ -115,7 +116,7 @@ func TestNewService(t *testing.T) {
 		{
 			name: "AssessmentServer created with options",
 			args: args{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithEvidenceStoreAddress("localhost:9091"),
 					WithOrchestratorAddress("localhost:9092"),
 				},
@@ -128,7 +129,7 @@ func TestNewService(t *testing.T) {
 		{
 			name: "AssessmentServer without EvidenceStore",
 			args: args{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithoutEvidenceStore(),
 				},
 			},
@@ -139,7 +140,7 @@ func TestNewService(t *testing.T) {
 		{
 			name: "AssessmentServer with oauth2 authorizer",
 			args: args{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithOAuth2Authorizer(&clientcredentials.Config{ClientID: "client"}),
 				},
 			},
@@ -150,7 +151,7 @@ func TestNewService(t *testing.T) {
 		{
 			name: "AssessmentServer with authorization strategy",
 			args: args{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithAuthorizationStrategy(servicetest.NewAuthorizationStrategy(true)),
 				},
 			},
@@ -172,9 +173,10 @@ func TestNewService(t *testing.T) {
 // TestAssessEvidence tests AssessEvidence
 func TestService_AssessEvidence(t *testing.T) {
 	type fields struct {
-		authz         service.AuthorizationStrategy
-		evidenceStore *api.RPCConnection[evidence.EvidenceStoreClient]
-		orchestrator  *api.RPCConnection[orchestrator.OrchestratorClient]
+		authz               service.AuthorizationStrategy
+		evidenceStore       *api.RPCConnection[evidence.EvidenceStoreClient]
+		orchestrator        *api.RPCConnection[orchestrator.OrchestratorClient]
+		evidenceResourceMap map[string]*evidence.Evidence
 	}
 	type args struct {
 		in0      context.Context
@@ -270,9 +272,10 @@ func TestService_AssessEvidence(t *testing.T) {
 		{
 			name: "Assess resource",
 			fields: fields{
-				evidenceStore: api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
-				orchestrator:  api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
-				authz:         servicetest.NewAuthorizationStrategy(true),
+				evidenceStore:       api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
+				orchestrator:        api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
+				authz:               servicetest.NewAuthorizationStrategy(true),
+				evidenceResourceMap: make(map[string]*evidence.Evidence),
 			},
 			args: args{
 				in0: context.TODO(),
@@ -286,8 +289,10 @@ func TestService_AssessEvidence(t *testing.T) {
 					}),
 					CloudServiceId: testdata.MockCloudServiceID1},
 			},
-			wantResp: &assessment.AssessEvidenceResponse{},
-			wantErr:  assert.NoError,
+			wantResp: &assessment.AssessEvidenceResponse{
+				Status: assessment.AssessmentStatus_ASSESSMENT_STATUS_ASSESSED,
+			},
+			wantErr: assert.NoError,
 		},
 		{
 			name: "Assess resource of wrong could service",
@@ -314,9 +319,10 @@ func TestService_AssessEvidence(t *testing.T) {
 		{
 			name: "Assess resource without resource id",
 			fields: fields{
-				evidenceStore: api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
-				orchestrator:  api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
-				authz:         servicetest.NewAuthorizationStrategy(true),
+				evidenceStore:       api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
+				orchestrator:        api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
+				authz:               servicetest.NewAuthorizationStrategy(true),
+				evidenceResourceMap: make(map[string]*evidence.Evidence),
 			},
 			args: args{
 				in0: context.TODO(),
@@ -336,9 +342,10 @@ func TestService_AssessEvidence(t *testing.T) {
 		{
 			name: "No RPC connections",
 			fields: fields{
-				evidenceStore: api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(connectionRefusedDialer)),
-				orchestrator:  api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(connectionRefusedDialer)),
-				authz:         servicetest.NewAuthorizationStrategy(true),
+				evidenceStore:       api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(connectionRefusedDialer)),
+				orchestrator:        api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(connectionRefusedDialer)),
+				authz:               servicetest.NewAuthorizationStrategy(true),
+				evidenceResourceMap: make(map[string]*evidence.Evidence),
 			},
 			args: args{
 				in0: context.TODO(),
@@ -358,6 +365,67 @@ func TestService_AssessEvidence(t *testing.T) {
 				return assert.ErrorContains(t, err, "connection refused")
 			},
 		},
+		{
+			name: "Assess resource and wait existing related resources is already there",
+			fields: fields{
+				evidenceStore: api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
+				orchestrator:  api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
+				authz:         servicetest.NewAuthorizationStrategy(true),
+				evidenceResourceMap: map[string]*evidence.Evidence{
+					"my-other-resource-id": {
+						Id: testdata.MockEvidenceID2,
+						Resource: prototest.NewAny(t, &ontology.VirtualMachine{
+							Id: testdata.MockResourceID2,
+						}),
+					},
+				},
+			},
+			args: args{
+				in0: context.TODO(),
+				evidence: &evidence.Evidence{
+					Id:             testdata.MockEvidenceID1,
+					ToolId:         testdata.MockEvidenceToolID1,
+					Timestamp:      timestamppb.Now(),
+					CloudServiceId: testdata.MockCloudServiceID1,
+					Resource: prototest.NewAny(t, &ontology.VirtualMachine{
+						Id:   testdata.MockResourceID1,
+						Name: testdata.MockResourceName1,
+					}),
+					ExperimentalRelatedResourceIds: []string{"my-other-resource-id"},
+				},
+			},
+			wantResp: &assessment.AssessEvidenceResponse{
+				Status: assessment.AssessmentStatus_ASSESSMENT_STATUS_ASSESSED,
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "Assess resource and wait existing related resources is not there",
+			fields: fields{
+				evidenceStore:       api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
+				orchestrator:        api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
+				authz:               servicetest.NewAuthorizationStrategy(true),
+				evidenceResourceMap: make(map[string]*evidence.Evidence),
+			},
+			args: args{
+				in0: context.TODO(),
+				evidence: &evidence.Evidence{
+					Id:             testdata.MockEvidenceID1,
+					ToolId:         testdata.MockEvidenceToolID1,
+					Timestamp:      timestamppb.Now(),
+					CloudServiceId: testdata.MockCloudServiceID1,
+					Resource: prototest.NewAny(t, &ontology.VirtualMachine{
+						Id:   testdata.MockResourceID1,
+						Name: testdata.MockResourceName1,
+					}),
+					ExperimentalRelatedResourceIds: []string{"my-other-resource-id"},
+				},
+			},
+			wantResp: &assessment.AssessEvidenceResponse{
+				Status: assessment.AssessmentStatus_ASSESSMENT_STATUS_WAITING_FOR_RELATED,
+			},
+			wantErr: assert.NoError,
+		},
 	}
 
 	for _, tt := range tests {
@@ -368,15 +436,16 @@ func TestService_AssessEvidence(t *testing.T) {
 				evidenceStoreStreams: api.NewStreamsOf(api.WithLogger[evidence.EvidenceStore_StoreEvidencesClient, *evidence.StoreEvidenceRequest](log)),
 				orchestratorStreams:  api.NewStreamsOf(api.WithLogger[orchestrator.Orchestrator_StoreAssessmentResultsClient, *orchestrator.StoreAssessmentResultRequest](log)),
 				cachedConfigurations: make(map[string]cachedConfiguration),
+				evidenceResourceMap:  tt.fields.evidenceResourceMap,
+				requests:             make(map[string]waitingRequest),
 				pe:                   policies.NewRegoEval(policies.WithPackageName(policies.DefaultRegoPackage)),
 				authz:                tt.fields.authz,
 			}
 			gotResp, err := s.AssessEvidence(tt.args.in0, &assessment.AssessEvidenceRequest{Evidence: tt.args.evidence})
 
 			tt.wantErr(t, err)
-
 			// Check response
-			assert.Empty(t, gotResp)
+			assert.Equal(t, tt.wantResp, gotResp)
 		})
 	}
 }
@@ -400,6 +469,7 @@ func TestService_AssessEvidence_DetectMisconfiguredEvidenceEvenWhenAlreadyCached
 			api.WithLogger[orchestrator.Orchestrator_StoreAssessmentResultsClient,
 				*orchestrator.StoreAssessmentResultRequest](log)),
 		cachedConfigurations: make(map[string]cachedConfiguration),
+		evidenceResourceMap:  make(map[string]*evidence.Evidence),
 		pe:                   policies.NewRegoEval(policies.WithPackageName(policies.DefaultRegoPackage)),
 	}
 	// First assess evidence with a valid VM resource s.t. the cache is created for the combination of resource type and
@@ -465,7 +535,7 @@ func TestService_AssessEvidences(t *testing.T) {
 			},
 			wantErr: assert.Nil[error],
 			want: func(t *testing.T, got *assessment.AssessEvidencesResponse) bool {
-				assert.Equal(t, assessment.AssessEvidencesResponse_FAILED, got.Status)
+				assert.Equal(t, assessment.AssessmentStatus_ASSESSMENT_STATUS_FAILED, got.Status)
 				return assert.Contains(t, got.StatusMessage, "evidence.tool_id: value length must be at least 1 characters")
 			},
 		},
@@ -483,7 +553,7 @@ func TestService_AssessEvidences(t *testing.T) {
 			},
 			wantErr: assert.Nil[error],
 			want: func(t *testing.T, got *assessment.AssessEvidencesResponse) bool {
-				assert.Equal(t, assessment.AssessEvidencesResponse_FAILED, got.Status)
+				assert.Equal(t, assessment.AssessmentStatus_ASSESSMENT_STATUS_FAILED, got.Status)
 				return assert.Contains(t, got.StatusMessage, "evidence.id: value is empty, which is not a valid UUID")
 			},
 		},
@@ -510,7 +580,7 @@ func TestService_AssessEvidences(t *testing.T) {
 			},
 			wantErr: assert.Nil[error],
 			want: func(t *testing.T, got *assessment.AssessEvidencesResponse) bool {
-				assert.Equal(t, assessment.AssessEvidencesResponse_ASSESSED, got.Status)
+				assert.Equal(t, assessment.AssessmentStatus_ASSESSMENT_STATUS_ASSESSED, got.Status)
 				return assert.Empty(t, got.StatusMessage)
 			},
 		},
@@ -568,6 +638,7 @@ func TestService_AssessEvidences(t *testing.T) {
 				evidenceStore:        api.NewRPCConnection("bufnet", evidence.NewEvidenceStoreClient, grpc.WithContextDialer(bufConnDialer)),
 				orchestrator:         api.NewRPCConnection("bufnet", orchestrator.NewOrchestratorClient, grpc.WithContextDialer(bufConnDialer)),
 				orchestratorStreams:  tt.fields.orchestratorStreams,
+				evidenceResourceMap:  make(map[string]*evidence.Evidence),
 				pe:                   policies.NewRegoEval(),
 				authz:                tt.fields.authz,
 			}
@@ -656,8 +727,10 @@ func TestService_AssessmentResultHooks(t *testing.T) {
 
 				resultHooks: []assessment.ResultHookFunc{firstHookFunction, secondHookFunction},
 			},
-			wantErr:  assert.Nil[error],
-			wantResp: &assessment.AssessEvidenceResponse{},
+			wantErr: assert.Nil[error],
+			wantResp: &assessment.AssessEvidenceResponse{
+				Status: assessment.AssessmentStatus_ASSESSMENT_STATUS_ASSESSED,
+			},
 		},
 	}
 
@@ -832,6 +905,7 @@ func TestService_handleEvidence(t *testing.T) {
 	}
 	type args struct {
 		evidence *evidence.Evidence
+		related  map[string]ontology.IsResource
 	}
 	tests := []struct {
 		name    string
@@ -954,7 +1028,7 @@ func TestService_handleEvidence(t *testing.T) {
 				authz:                tt.fields.authz,
 			}
 
-			results, err := s.handleEvidence(context.Background(), tt.args.evidence)
+			results, err := s.handleEvidence(context.Background(), tt.args.evidence, tt.args.related)
 
 			tt.wantErr(t, err)
 			tt.want(t, results)
@@ -964,7 +1038,7 @@ func TestService_handleEvidence(t *testing.T) {
 
 func TestService_initOrchestratorStoreStream(t *testing.T) {
 	type fields struct {
-		opts []service.Option[Service]
+		opts []service.Option[*Service]
 	}
 	type args struct {
 		url string
@@ -982,7 +1056,7 @@ func TestService_initOrchestratorStoreStream(t *testing.T) {
 				url: "localhost:1",
 			},
 			fields: fields{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithOrchestratorAddress("localhost:1"),
 				},
 			},
@@ -998,7 +1072,7 @@ func TestService_initOrchestratorStoreStream(t *testing.T) {
 				url: "bufnet",
 			},
 			fields: fields{
-				opts: []service.Option[Service]{
+				opts: []service.Option[*Service]{
 					WithOrchestratorAddress("bufnet", grpc.WithContextDialer(bufConnDialer)),
 					WithOAuth2Authorizer(testutil.AuthClientConfig(authPort)),
 				},
@@ -1079,7 +1153,7 @@ type eventRecorder struct {
 	done  bool
 }
 
-func (*eventRecorder) Eval(_ *evidence.Evidence, _ ontology.IsResource, _ policies.MetricsSource) (data []*policies.Result, err error) {
+func (*eventRecorder) Eval(_ *evidence.Evidence, _ ontology.IsResource, _ map[string]ontology.IsResource, _ policies.MetricsSource) (data []*policies.Result, err error) {
 	return nil, nil
 }
 
@@ -1108,7 +1182,7 @@ func TestService_MetricImplementation(t *testing.T) {
 	}
 	type args struct {
 		lang   assessment.MetricImplementation_Language
-		metric string
+		metric *assessment.Metric
 	}
 	tests := []struct {
 		name    string
@@ -1146,6 +1220,28 @@ func TestService_MetricImplementation(t *testing.T) {
 
 			tt.wantErr(t, err)
 			tt.want(t, gotImpl)
+		})
+	}
+}
+
+func TestDefaultServiceSpec(t *testing.T) {
+	tests := []struct {
+		name string
+		want assert.Want[launcher.ServiceSpec]
+	}{
+		{
+			name: "Happy path",
+			want: func(t *testing.T, got launcher.ServiceSpec) bool {
+				return assert.NotNil(t, got)
+
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := DefaultServiceSpec()
+
+			tt.want(t, got)
 		})
 	}
 }
