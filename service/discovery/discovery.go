@@ -48,6 +48,7 @@ import (
 	"clouditor.io/clouditor/v2/service/discovery/aws"
 	"clouditor.io/clouditor/v2/service/discovery/azure"
 	"clouditor.io/clouditor/v2/service/discovery/extra/csaf"
+	"clouditor.io/clouditor/v2/service/discovery/gvm"
 	"clouditor.io/clouditor/v2/service/discovery/k8s"
 
 	"github.com/go-co-op/gocron"
@@ -63,10 +64,11 @@ import (
 )
 
 const (
-	ProviderAWS   = "aws"
-	ProviderK8S   = "k8s"
-	ProviderAzure = "azure"
-	ProviderCSAF  = "csaf"
+	ProviderAWS       = "aws"
+	ProviderK8S       = "k8s"
+	ProviderAzure     = "azure"
+	ProviderCSAF      = "csaf"
+	ProviderGreenbone = "gvm"
 )
 
 var log *logrus.Entry
@@ -78,7 +80,7 @@ func DefaultServiceSpec() launcher.ServiceSpec {
 
 	// If no CSPs for discovering are given, take all implemented discoverers
 	if len(viper.GetStringSlice(config.DiscoveryProviderFlag)) == 0 {
-		providers = []string{ProviderAWS, ProviderAzure, ProviderK8S}
+		providers = []string{ProviderAWS, ProviderAzure, ProviderK8S, ProviderGreenbone}
 	} else {
 		providers = viper.GetStringSlice(config.DiscoveryProviderFlag)
 	}
@@ -226,7 +228,7 @@ func NewService(opts ...service.Option[*Service]) *Service {
 		Events:            make(chan *DiscoveryEvent),
 		csID:              config.DefaultCloudServiceID,
 		authz:             &service.AuthorizationStrategyAllowAll{},
-		discoveryInterval: 5 * time.Minute, // Default discovery interval is 5 minutes
+		discoveryInterval: 60 * time.Minute, // Default discovery interval is 5 minutes -> Changed to 60 minutes to not trigger vulnerability scans too often
 	}
 
 	// Apply any options
@@ -301,6 +303,7 @@ func (svc *Service) Start(ctx context.Context, req *discovery.StartDiscoveryRequ
 	}
 
 	// Check if cloud_service_id in the service is within allowed or one can access *all* the cloud services
+	// TODO: Check JWT Token for specific gvm allowance
 	if !svc.authz.CheckAccess(ctx, service.AccessUpdate, svc) {
 		return nil, service.ErrPermissionDenied
 	}
@@ -355,6 +358,10 @@ func (svc *Service) Start(ctx context.Context, req *discovery.StartDiscoveryRequ
 				opts = append(opts, csaf.WithProviderDomain(domain))
 			}
 			svc.discoverers = append(svc.discoverers, csaf.NewTrustedProviderDiscovery(opts...))
+		// TODO: Implement Greenbone
+		case provider == ProviderGreenbone:
+			// TODO: Do some authentication for Greenbone?
+			svc.discoverers = append(svc.discoverers, gvm.NewGvmDiscovery(svc.csID))
 		default:
 			newError := fmt.Errorf("provider %s not known", provider)
 			log.Error(newError)
@@ -453,7 +460,7 @@ func (svc *Service) StartDiscovery(discoverer discovery.Discoverer) {
 		// Get Evidence Store stream
 		channel, err := svc.assessmentStreams.GetStream(svc.assessment.Target, "Assessment", svc.initAssessmentStream, svc.assessment.Opts...)
 		if err != nil {
-			err = fmt.Errorf("could not get stream to assessment service (%s): %w", svc.assessment.Target, err)
+			err = fmt.Errorf("could not get stream to assessment service (%s): %w", svc.assessment.Target, err) //TODO: Current Error!
 			log.Error(err)
 			continue
 		}

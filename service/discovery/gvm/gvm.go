@@ -26,10 +26,14 @@
 package gvm
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/xml"
 	"fmt"
 	"os"
+	"os/exec"
+	"strings"
 
 	"github.com/fsnotify/fsnotify"
 
@@ -51,16 +55,10 @@ type gvmDiscovery struct {
 
 type DiscoveryOption func(a *gvmDiscovery)
 
-func NewGvmDiscovery(opts ...DiscoveryOption) discovery.Discoverer {
+func NewGvmDiscovery(id string) discovery.Discoverer {
 	d := &gvmDiscovery{
-		csID:   discovery.DefaultCloudServiceID,
+		csID:   id,
 		domain: "localhost",
-		// client: http.DefaultClient,
-	}
-
-	// Apply options
-	for _, opt := range opts {
-		opt(d)
 	}
 
 	return d
@@ -78,25 +76,156 @@ func (*gvmDiscovery) Description() string {
 	return "Discovery of operating system vulnerabilities using Greenbone Vulnerability Management"
 }
 
-// Starts the discovery process
-func (d *gvmDiscovery) collectEvidences() any {
+// List returns a list of resources that were discovered
+func (d *gvmDiscovery) List() (list []ontology.IsResource, err error) {
+	log.Info("Scanning for resources...")
 
-	// Generate a random hash as name for the report; n is the number of bytes,
-	// hex string will be twice as long
-	filename, err := generateRandomHex(8) // Generates a 16-character hex string
-	if err != nil {
-		fmt.Println("Error:", err)
-		filename = "123456789abcdef" // Default hash
+	// Create connection to GVM container
+	return d.discoverOperatingSystem()
+
+	//TODO: Check for errors
+	// Forward the results to the evaluation module
+}
+
+func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResource, err error) {
+
+	// Define the command and parameters
+	cmd := exec.Command("bash", "-c", "lsof -i | grep LISTEN")
+
+	// A buffer to capture the output
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	// Run the command
+	errorMessage := cmd.Run()
+	if errorMessage != nil {
+		return nil, errorMessage
 	}
 
-	//TODO: Connect to gvmd Container
-	//TODO: Call the script
-	// python3 authenticatedScript.py unique_filename
+	os := &ontology.OperatingSystem{
+		Name:            "Linux",
+		Vulnerabilities: []*ontology.Vulnerability{},
+	}
 
-	filename += ".xml" // Add extension
+	results, err := d.collectEvidences()
+	if err != nil {
+		fmt.Println("Error collecting the evidences:", err)
+	}
+
+	// We use the KEV catalog to check if the vulnerability has been exploited in the past
+	data, err := loadFileAsString("/Users/dominik.fuchs/Documents/clouditor/internal/kevcatalog/kevcatalog.json") //TODO: Update catalog regurarly to get updated CVEs
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+	}
+
+	fmt.Println(len(data))
+
+	// Map the xml structure to ontology structure
+	for _, result := range results {
+		for _, ref := range result.NVT.Refs.Ref { //TODO: Here, we create a new vulnerability for each CVE, maybe we should create one vulnerability with multiple CVEs
+			vul := &ontology.Vulnerability{}
+			vul.Id = result.ID
+			vul.Name = result.Name
+			vul.Port = result.Port
+			vul.Severity = float32(result.Severity) // Convert int to float32
+			vul.Threat = result.Threat
+			vul.Family = result.NVT.Family
+			// Ref specific
+			vul.Cve = ref.ID
+
+			// Check if the vulnerability has been exploited in the past
+			if data != "" {
+				vul.Exploitable = strings.Contains(data, vul.Cve) // Maybe check for "CVE-2021-1234" instead of CVE-2021-1234 to make sure we catch the whole CVE
+			} else {
+				vul.Exploitable = false
+			}
+
+			os.Vulnerabilities = append(os.Vulnerabilities, vul)
+		}
+	}
+
+	fmt.Println("Vulnerabilities found: ", len(os.Vulnerabilities))
+	// fmt.Println("First Vulnerability: ", os.Vulnerabilities[0].Name)  -> jQuery < 1.6.3 XSS Vulnerability
+
+	if err != nil {
+		log.Fatal("Error while evaluating vulnerabilities:", err)
+	}
+
+	// Print the output from the command
+	fmt.Println("Command Output:", out.String())
+
+	return []ontology.IsResource{os}, errorMessage
+}
+
+func (d *gvmDiscovery) collectEvidences() (results []Result, err error) {
+
+	// Generate a random hash for the name of the report, 16 characters long,
+	// or a default hash if something went wrong
+	filename, err := generateRandomHex(8)
+	if err != nil {
+		fmt.Println("Could not generate a random Hash:", err)
+		filename = "123456789abcdef"
+	}
+
+	filename += ".xml"
 
 	// Define the directory to watch
 	directory := "/Users/dominik.fuchs/Documents/clouditor/reports"
+
+	// Define the command and parameters
+	cmd := exec.Command("docker", "exec", "greenbone-community-container-gvmd-1", "python3", "/home/GreenbonePythonScript/authenticatedScript.py", filename)
+
+	// Execute the command and collect the output
+	out, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Could not run command: ", err)
+	}
+
+	fmt.Println("Output: ", string(out))
+
+	// Check for new results of the scan
+	reportText, err := d.watchResults(directory, filename) // filename
+	if err != nil {
+		fmt.Printf("Error while watching the results: %v", err)
+		return
+	}
+
+	report := Report{}
+	// Unmarshal the XML content to the struct
+	err = xml.Unmarshal(reportText, &report)
+	if err != nil {
+		fmt.Printf("Error while parsing the report: %v", err)
+		return
+	}
+
+	results = report.Report.Results.Result
+
+	// Seems ok, Authenticated Scan / LSC Info Consolidation (Linux/Unix SSH Login)
+	// fmt.Println("First Name: ", results[0].Name)
+	fmt.Println("results: ", len(results))
+
+	// Only keep the CVE references
+	for i := range results {
+		var cves []Ref
+		// fmt.Println("Refs: ", len(results[i].NVT.Refs.Ref))
+		for _, ref := range results[i].NVT.Refs.Ref {
+			if ref.Type == "cve" {
+				cves = append(cves, ref)
+			}
+		}
+		results[i].NVT.Refs.Ref = cves
+	}
+
+	// fmt.Println("First CVE: ", results[0].NVT.Refs.Ref[0].ID) // -> Throws error, since 1. result does not have a CVE reference
+
+	return
+}
+
+// WatchResults creates a watcher for the file and returns the content of the file
+func (d *gvmDiscovery) watchResults(directory string, filename string) (contentText []byte, err error) {
+
+	// Create a channel to receive the file content
+	contentCh := make(chan []byte)
 
 	// Set up a new file watcher
 	watcher, err := fsnotify.NewWatcher()
@@ -105,30 +234,33 @@ func (d *gvmDiscovery) collectEvidences() any {
 	}
 	defer watcher.Close()
 
-	contentText := ""
-
 	// Start listening for events
 	go func() {
 		for {
 			select {
 			case event, ok := <-watcher.Events:
 				if !ok {
+					log.Println("Error in the event the file created:", err)
 					return
 				}
+				fmt.Println("Event:", event)
 				if event.Op&fsnotify.Create == fsnotify.Create {
 					if event.Name == directory+"/"+filename {
 						fmt.Println("File Created:", event.Name)
 						content, err := os.ReadFile(event.Name)
-						contentText = string(content)
+						contentText = content
 						if err != nil {
 							log.Println("Error reading file:", err)
 							continue
 						}
-						// fmt.Println("File content:", string(content))
+						// Send the file content to the channel
+						contentCh <- content
+						return
 					}
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
+					log.Println("error:", err)
 					return
 				}
 				log.Println("error:", err)
@@ -141,42 +273,33 @@ func (d *gvmDiscovery) collectEvidences() any {
 		log.Fatal(err)
 	}
 
-	print(contentText)
-	// TODO: Parse the content and map it to the ontology
+	// Receive the file content from the channel
+	contentText = <-contentCh
 
-	// Keep the program alive
-	select {}
+	return contentText, nil
 
 }
 
+// loadFileAsString reads the entire file content as a single string
+func loadFileAsString(filePath string) (string, error) {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+// generateRandomHex generates a random hex string of length n
 func generateRandomHex(n int) (string, error) {
 	bytes := make([]byte, n)
 	_, err := rand.Read(bytes)
 	if err != nil {
-		return "", err // Handle errors properly
+		return "", err
 	}
 	return hex.EncodeToString(bytes), nil
 }
 
-// List returns a list of resources discovered by the GVM
-// Is this the method where Evicences are discovered, i.e. vulnerabilities stored?
-func (d *gvmDiscovery) List() (list []ontology.IsResource, err error) {
-	log.Info("Scanning for vulnerabilities on the target system...")
-
-	// Create connection to GVM container
-
-	ssh_connection := d.establishSSHConnection() // Create an instance of SSHConnection
-
-	// Start scanning for vulnerabilities
-	results := ssh_connection.startScan()
-	print(results)
-
-	//TODO: Check for errors
-	// Forward the results to the evaluation module
-
-	return nil, nil
-}
-
+/*
 // Define the type of ssh_connection
 type SSHConnection struct {
 	port      string `default:"22"`
@@ -199,4 +322,4 @@ func (s *SSHConnection) report() []any {
 // establishSSHConnection establishes a SSH connection to the GVM server
 func (d *gvmDiscovery) establishSSHConnection() SSHConnection {
 	panic("unimplemented")
-}
+}*/

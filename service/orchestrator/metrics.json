@@ -839,6 +839,7 @@
     "id": "PlaceholderMetric",
     "name": "Placeholder",
     "description": "This is a placeholder metric that stands for future to-be-implemented checks",
+    "category": "Vulnerabilities",
     "scale": 1,
     "range": {
       "allowedValues": {

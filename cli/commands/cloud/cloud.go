@@ -70,7 +70,7 @@ func NewRegisterCloudServiceCommand() *cobra.Command {
 			return session.HandleResponse(res, err)
 		},
 		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-			return []string{"aws", "azure"}, cobra.ShellCompDirectiveNoFileComp
+			return []string{"aws", "azure", "gvm"}, cobra.ShellCompDirectiveNoFileComp
 		},
 	}
 

@@ -266,6 +266,7 @@ message Resource {
     GenericDocument generic_document = 41;
     SecurityAdvisoryDocument security_advisory_document = 42;
     ServiceMetadataDocument service_metadata_document = 43;
+    OperatingSystem operating_system = 44;
   }
 }
 
@@ -1559,6 +1560,21 @@ message ObjectStorageService {
   UsageStatistics usage_statistics = 18;
 }
 
+// OperatingSystem is an entity class in our ontology. It can be instantiated and contains all of its properties as well of its implemented interfaces.
+message OperatingSystem {
+  option (resource_type_names) = "OperatingSystem";
+  option (resource_type_names) = "Resource";
+
+  google.protobuf.Timestamp creation_time = 1;
+  string id = 2 [(buf.validate.field).required = true];
+  map<string, string> labels = 3;
+  string name = 4 [(buf.validate.field).required = true];
+  // The raw field contains the raw information that is used to fill in the fields of the ontology.
+  string raw = 5;
+  optional string parent_id = 6;
+  repeated Vulnerability vulnerabilities = 7;
+}
+
 // Operation is an abstract class in our ontology, it cannot be instantiated but acts as an "interface".
 message Operation {
   oneof type {
@@ -2028,6 +2044,20 @@ message VirtualSubNetwork {
   repeated Redundancy redundancies = 8;
   optional string parent_id = 9;
   UsageStatistics usage_statistics = 10;
+}
+
+// Vulnerability is an entity class in our ontology. It can be instantiated and contains all of its properties as well of its implemented interfaces.
+message Vulnerability {
+  option (resource_type_names) = "Vulnerability";
+
+  string cve = 1;
+  bool exploitable = 2;
+  string family = 3;
+  string id = 4 [(buf.validate.field).required = true];
+  string name = 5 [(buf.validate.field).required = true];
+  string port = 6;
+  float severity = 7;
+  string threat = 8;
 }
 
 // WebApplicationFirewall is an entity class in our ontology. It can be instantiated and contains all of its properties as well of its implemented interfaces.

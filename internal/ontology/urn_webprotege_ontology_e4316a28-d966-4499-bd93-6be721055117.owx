@@ -300,6 +300,9 @@
         <Class IRI="http://graph.clouditor.io/classes/ObjectStorageService"/>
     </Declaration>
     <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/OperatingSystem"/>
+    </Declaration>
+    <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/Operation"/>
     </Declaration>
     <Declaration>
@@ -379,6 +382,9 @@
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/VirtualSubNetwork"/>
+    </Declaration>
+    <Declaration>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
     </Declaration>
     <Declaration>
         <Class IRI="http://graph.clouditor.io/classes/WebApplicationFirewall"/>
@@ -636,10 +642,19 @@
         <DataProperty abbreviatedIRI="prop:call"/>
     </Declaration>
     <Declaration>
+        <DataProperty abbreviatedIRI="prop:cve"/>
+    </Declaration>
+    <Declaration>
         <DataProperty abbreviatedIRI="prop:enabled"/>
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:enforced"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty abbreviatedIRI="prop:exploitable"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty abbreviatedIRI="prop:family"/>
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:field"/>
@@ -649,6 +664,9 @@
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:handler"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty abbreviatedIRI="prop:host"/>
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:impact"/>
@@ -687,6 +705,9 @@
         <DataProperty abbreviatedIRI="prop:policy"/>
     </Declaration>
     <Declaration>
+        <DataProperty abbreviatedIRI="prop:port"/>
+    </Declaration>
+    <Declaration>
         <DataProperty abbreviatedIRI="prop:ports"/>
     </Declaration>
     <Declaration>
@@ -708,7 +729,13 @@
         <DataProperty abbreviatedIRI="prop:serves"/>
     </Declaration>
     <Declaration>
+        <DataProperty abbreviatedIRI="prop:severity"/>
+    </Declaration>
+    <Declaration>
         <DataProperty abbreviatedIRI="prop:source"/>
+    </Declaration>
+    <Declaration>
+        <DataProperty abbreviatedIRI="prop:threat"/>
     </Declaration>
     <Declaration>
         <DataProperty abbreviatedIRI="prop:tlsVersion"/>
@@ -879,13 +906,13 @@
         <NamedIndividual abbreviatedIRI="library:SpringBootRequestMapping"/>
     </Declaration>
     <Declaration>
+        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
+    </Declaration>
+    <Declaration>
         <Datatype abbreviatedIRI="xsd:de.fraunhofer.aisec.cpg.graph.Node"/>
     </Declaration>
     <Declaration>
         <Datatype abbreviatedIRI="xsd:listString"/>
-    </Declaration>
-    <Declaration>
-        <AnnotationProperty IRI="http://purl.org/dc/elements/1.1/description"/>
     </Declaration>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/ABAC"/>
@@ -2202,6 +2229,17 @@
         </ObjectSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/OperatingSystem"/>
+        <Class IRI="http://graph.clouditor.io/classes/BaseResource"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/OperatingSystem"/>
+        <ObjectSomeValuesFrom>
+            <ObjectProperty abbreviatedIRI="prop:hasMultiple"/>
+            <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        </ObjectSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/Operation"/>
         <Class IRI="http://graph.clouditor.io/classes/Functionality"/>
     </SubClassOf>
@@ -2539,6 +2577,62 @@
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/VirtualSubNetwork"/>
         <Class IRI="http://graph.clouditor.io/classes/Networking"/>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/classes/id"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty IRI="http://graph.clouditor.io/classes/name"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:cve"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:exploitable"/>
+            <Datatype abbreviatedIRI="xsd:boolean"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:family"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:port"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:severity"/>
+            <Datatype abbreviatedIRI="xsd:float"/>
+        </DataSomeValuesFrom>
+    </SubClassOf>
+    <SubClassOf>
+        <Class IRI="http://graph.clouditor.io/classes/Vulnerability"/>
+        <DataSomeValuesFrom>
+            <DataProperty abbreviatedIRI="prop:threat"/>
+            <Datatype abbreviatedIRI="xsd:string"/>
+        </DataSomeValuesFrom>
     </SubClassOf>
     <SubClassOf>
         <Class IRI="http://graph.clouditor.io/classes/WebApplicationFirewall"/>
@@ -4416,6 +4510,16 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:exploitable</AbbreviatedIRI>
+        <Literal xml:lang="en">exploitable</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:family</AbbreviatedIRI>
+        <Literal xml:lang="en">family</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:field</AbbreviatedIRI>
         <Literal xml:lang="english">field</Literal>
     </AnnotationAssertion>
@@ -4438,6 +4542,11 @@ name = metadata.name</Literal>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:hasMultiple</AbbreviatedIRI>
         <Literal xml:lang="english">hasMultiple</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:host</AbbreviatedIRI>
+        <Literal xml:lang="en">host</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
@@ -4521,6 +4630,11 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:port</AbbreviatedIRI>
+        <Literal xml:lang="en">port</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:ports</AbbreviatedIRI>
         <Literal xml:lang="english">ports</Literal>
     </AnnotationAssertion>
@@ -4586,6 +4700,11 @@ name = metadata.name</Literal>
     </AnnotationAssertion>
     <AnnotationAssertion>
         <AnnotationProperty abbreviatedIRI="rdfs:label"/>
+        <AbbreviatedIRI>prop:threat</AbbreviatedIRI>
+        <Literal xml:lang="en">threat</Literal>
+    </AnnotationAssertion>
+    <AnnotationAssertion>
+        <AnnotationProperty abbreviatedIRI="rdfs:label"/>
         <AbbreviatedIRI>prop:tlsVersion</AbbreviatedIRI>
         <Literal xml:lang="english">tlsVersion</Literal>
     </AnnotationAssertion>
@@ -4633,4 +4752,5 @@ name = metadata.name</Literal>
 
 
 
-<!-- Generated by the OWL API (version 4.5.13) https://github.com/owlcs/owlapi -->
+<!-- Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi -->
+
