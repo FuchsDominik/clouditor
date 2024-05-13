@@ -4,6 +4,47 @@ import "encoding/xml"
 
 // These types are used by Unmarshal to parse the xml to structs.
 
+// Manage the targets
+type GetTargetsResponse struct {
+	XMLName xml.Name `xml:"get_targets_response"`
+	Targets Target   `xml:"target"`
+}
+
+type Target struct {
+	ID    string `xml:"id,attr"`
+	Hosts string `xml:"hosts"`
+}
+
+// Manage the configs
+
+type GetConfigsResponse struct {
+	XMLName xml.Name `xml:"get_configs_response"`
+	Configs []Config `xml:"config"`
+}
+
+type Config struct {
+	ID   string `xml:"id,attr"`
+	Name string `xml:"name"`
+}
+
+// Manage the reponse of the create task request
+
+type CreateTaskResponse struct {
+	XMLName xml.Name `xml:"create_task_response"`
+	Status  string   `xml:"status,attr"`
+	ID      string   `xml:"id,attr"`
+}
+
+// Manage the reponse of the start task request
+
+type StartTaskResponse struct {
+	XMLName  xml.Name `xml:"start_task_response"`
+	Status   string   `xml:"status,attr"`
+	ReportID string   `xml:"report_id"`
+}
+
+// The ultimate report
+
 type Report struct {
 	Report ReportData `xml:"report"`
 }

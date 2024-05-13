@@ -26,7 +26,6 @@
 package gvm
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/xml"
@@ -90,17 +89,17 @@ func (d *gvmDiscovery) List() (list []ontology.IsResource, err error) {
 func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResource, err error) {
 
 	// Define the command and parameters
-	cmd := exec.Command("bash", "-c", "lsof -i | grep LISTEN")
+	// cmd := exec.Command("bash", "-c", "ls -la") // Works!
 
 	// A buffer to capture the output
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	// var out bytes.Buffer
+	// cmd.Stdout = &out
 
 	// Run the command
-	errorMessage := cmd.Run()
-	if errorMessage != nil {
-		return nil, errorMessage
-	}
+	// errorMessage := cmd.Run()
+	// if errorMessage != nil {
+	//	return nil, errorMessage
+	// }
 
 	os := &ontology.OperatingSystem{
 		Name:            "Linux",
@@ -152,72 +151,92 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 	}
 
 	// Print the output from the command
-	fmt.Println("Command Output:", out.String())
+	// fmt.Println("Command Output:", out.String())
 
-	return []ontology.IsResource{os}, errorMessage
+	return []ontology.IsResource{os}, err
 }
 
 func (d *gvmDiscovery) collectEvidences() (results []Result, err error) {
 
-	// Generate a random hash for the name of the report, 16 characters long,
+	// Define the command and parameters
+	// cmd := exec.Command("docker", "exec", "greenbone-community-container-gvmd-1", "python3", "/home/GreenbonePythonScript/authenticatedScript.py", filename)
+
+	targetId, err := getTargetId()
+
+	if err != nil {
+		fmt.Printf("Error while looking for target: %v", err)
+		return
+	}
+	fmt.Println("TargetId: ", targetId)
+
+	configId, err := getConfigId()
+
+	if err != nil {
+		fmt.Printf("Error while looking for config: %v", err)
+		return
+	}
+	fmt.Println("ConfigId: ", configId)
+
+	// Generate a random hash for the name of the task, 16 characters long,
 	// or a default hash if something went wrong
 	filename, err := generateRandomHex(8)
 	if err != nil {
 		fmt.Println("Could not generate a random Hash:", err)
-		filename = "123456789abcdef"
+		filename = "123456789abcdefg"
 	}
 
-	filename += ".xml"
-
-	// Define the directory to watch
-	directory := "/Users/dominik.fuchs/Documents/clouditor/reports"
-
-	// Define the command and parameters
-	cmd := exec.Command("docker", "exec", "greenbone-community-container-gvmd-1", "python3", "/home/GreenbonePythonScript/authenticatedScript.py", filename)
-
-	// Execute the command and collect the output
-	out, err := cmd.Output()
+	taskId, err := createScanTask(filename, targetId, configId)
 	if err != nil {
-		fmt.Println("Could not run command: ", err)
+		fmt.Printf("Error while creating the task: %v", err)
+		return
 	}
+	fmt.Println("TaskId: ", taskId)
 
-	fmt.Println("Output: ", string(out))
+	reportId, err := startTask(taskId)
+	if err != nil {
+		fmt.Printf("Error while starting the task: %v", err)
+		return
+	}
+	fmt.Println("Started task, report Id: ", reportId)
 
 	// Check for new results of the scan
-	reportText, err := d.watchResults(directory, filename) // filename
+	// reportText, err := d.watchResults(directory, filename) // filename
 	if err != nil {
 		fmt.Printf("Error while watching the results: %v", err)
 		return
 	}
 
-	report := Report{}
-	// Unmarshal the XML content to the struct
-	err = xml.Unmarshal(reportText, &report)
-	if err != nil {
-		fmt.Printf("Error while parsing the report: %v", err)
-		return
-	}
+	// Go on to parse the report
+	/*
 
-	results = report.Report.Results.Result
-
-	// Seems ok, Authenticated Scan / LSC Info Consolidation (Linux/Unix SSH Login)
-	// fmt.Println("First Name: ", results[0].Name)
-	fmt.Println("results: ", len(results))
-
-	// Only keep the CVE references
-	for i := range results {
-		var cves []Ref
-		// fmt.Println("Refs: ", len(results[i].NVT.Refs.Ref))
-		for _, ref := range results[i].NVT.Refs.Ref {
-			if ref.Type == "cve" {
-				cves = append(cves, ref)
-			}
+		report := Report{}
+		// Unmarshal the XML content to the struct
+		err = xml.Unmarshal(reportText, &report)
+		if err != nil {
+			fmt.Printf("Error while parsing the report: %v", err)
+			return
 		}
-		results[i].NVT.Refs.Ref = cves
-	}
 
-	// fmt.Println("First CVE: ", results[0].NVT.Refs.Ref[0].ID) // -> Throws error, since 1. result does not have a CVE reference
+		results = report.Report.Results.Result
 
+		// Seems ok, Authenticated Scan / LSC Info Consolidation (Linux/Unix SSH Login)
+		// fmt.Println("First Name: ", results[0].Name)
+		fmt.Println("results: ", len(results))
+
+		// Only keep the CVE references
+		for i := range results {
+			var cves []Ref
+			// fmt.Println("Refs: ", len(results[i].NVT.Refs.Ref))
+			for _, ref := range results[i].NVT.Refs.Ref {
+				if ref.Type == "cve" {
+					cves = append(cves, ref)
+				}
+			}
+			results[i].NVT.Refs.Ref = cves
+		}
+
+		// fmt.Println("First CVE: ", results[0].NVT.Refs.Ref[0].ID) // -> Throws error, since 1. result does not have a CVE reference
+	*/
 	return
 }
 
@@ -299,27 +318,113 @@ func generateRandomHex(n int) (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
-/*
-// Define the type of ssh_connection
-type SSHConnection struct {
-	port      string `default:"22"`
-	ipAddress string
+func getTargetId() (string, error) {
+	cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_targets/>"'`)
+
+	// Execute the command and collect the output
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Could not run target command: ", err)
+	}
+
+	var response GetTargetsResponse
+
+	err = xml.Unmarshal(out, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling target XML:", err)
+		return "", err
+	}
+
+	if response.Targets.Hosts == "192.168.178.102" {
+		fmt.Println("ID of target with IP '192.168.178.102':", response.Targets.ID)
+	} else {
+		fmt.Println("No target with the specified IP found.")
+	}
+	return response.Targets.ID, nil
 }
 
-// startScan starts the scan for vulnerabilities
-func (s *SSHConnection) startScan() []any {
-	// Implementation of the startScan method
+func getConfigId() (string, error) {
+	cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_configs/>"'`)
 
-	return s.report()
+	// Execute the command and collect the output
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Could not run config command: ", err)
+	}
+
+	var response GetConfigsResponse
+
+	err = xml.Unmarshal(out, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling config XML:", err)
+		return "", err
+	}
+
+	// Loop through all configs and find the one with the specified name
+	for _, config := range response.Configs {
+		if config.Name == "Full and fast Ports" {
+			fmt.Printf("ID of '%s' config: %s\n", config.Name, config.ID)
+			return config.ID, nil
+		}
+	}
+
+	return "", nil
 }
 
-// report reports the scan results
-func (s *SSHConnection) report() []any {
-	// Implementation of the report method
-	return []any{}
+func createScanTask(filename string, targetId string, configId string) (string, error) {
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<create_task><name>%s</name> \
+	<target id=\"%s\"></target> \
+	<config id=\"%s\"></config></create_task>"'`, filename, targetId, configId))
+
+	// Execute the command and collect the output
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Could not run create task command: ", err)
+	}
+
+	target := string(out)
+
+	fmt.Println("Output:\n", target)
+
+	var response CreateTaskResponse
+
+	err = xml.Unmarshal(out, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling create task XML:", err)
+		return "", err
+	}
+
+	if response.Status == "201" {
+		fmt.Println("Task successfully created with Id: ", response.ID)
+	} else {
+		fmt.Println("Could not create the task. Status: ", response.Status)
+		return "", nil
+	}
+	return response.ID, nil
 }
 
-// establishSSHConnection establishes a SSH connection to the GVM server
-func (d *gvmDiscovery) establishSSHConnection() SSHConnection {
-	panic("unimplemented")
-}*/
+func startTask(taskId string) (string, error) {
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<start_task task_id=\"%s\"/>"'`, taskId))
+
+	// Execute the command and collect the output
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Could not run start task command: ", err)
+	}
+
+	var response StartTaskResponse
+
+	err = xml.Unmarshal(out, &response)
+	if err != nil {
+		fmt.Println("Error unmarshaling start task XML:", err)
+		return "", err
+	}
+
+	if response.Status == "202" {
+		fmt.Println("Task successfully started with report Id: ", response.ReportID)
+	} else {
+		fmt.Println("Could not start the task. Status: ", response.Status)
+		return "", nil
+	}
+	return response.ReportID, nil
+}
