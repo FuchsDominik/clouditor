@@ -122,7 +122,7 @@
                 "controls": [
                     {
                         "id": "SecMon-01",
-                        "name": "monitoring of security-related controls",
+                        "name": "Monitoring of security-related controls",
                         "description": "Provide monitoring of important security-related controls",
                         "controls": [
                             {
