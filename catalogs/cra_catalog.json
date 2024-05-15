@@ -37,7 +37,7 @@
                                 "description": "The operating system should not have vulnerabilities in the standard configuration",
                                 "metrics": [
                                     {
-                                        "id": "NoConfigVulnerabilities"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -47,7 +47,7 @@
                                 "description": "The operating system should not have Privilege Escalation vulnerabilities",
                                 "metrics": [
                                     {
-                                        "id": "NoPEVulnerabilities"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -57,7 +57,7 @@
                                 "description": "The operating system should not have Privilege Escalation vulnerabilities",
                                 "metrics": [
                                     {
-                                        "id": "NoPEVulnerabilities"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -67,7 +67,7 @@
                                 "description": "The operating system shall enable at rest encryption.",
                                 "metrics": [
                                     {
-                                        "id": "AtRestEncryptionEnabled"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -77,7 +77,7 @@
                                 "description": "The operating system shall use state-of-the-art encryption algorithms for data at rest.",
                                 "metrics": [
                                     {
-                                        "id": "AtRestEncryptionAlgorithm"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -87,7 +87,7 @@
                                 "description": "The operating system shall use an up-to-date TLS protocol in all data transmissions",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionProtocol"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -97,7 +97,7 @@
                                 "description": "The operating system shall enable encryption in all data transmissions",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionEnabled"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -107,7 +107,7 @@
                                 "description": "The operating system shall not open ports that are not essential for basic system functionality or are vulnerable ",
                                 "metrics": [
                                     {
-                                        "id": "NoPortVulnerabilities"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -130,7 +130,7 @@
                                 "description": "An operating system shall have automatic security updates.",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionProtocol"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -140,7 +140,7 @@
                                 "description": "An operating system shall provide security related information by recording and/or monitoring relevant internal activity.",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionEnforced"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -150,7 +150,7 @@
                                 "description": "An operating system shall report on unauthorized access.",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionEnabled"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -160,7 +160,7 @@
                                 "description": "An operating system shall report on corrupted data.",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionEnabled"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -170,7 +170,7 @@
                                 "description": "An operating system shall identify and document vulnerabilities and components contained in the product.",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionEnabled"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -180,7 +180,7 @@
                                 "description": "An operating system shall apply effective and regular tests and reviews of the security of the product.",
                                 "metrics": [
                                     {
-                                        "id": "TransportEncryptionEnabled"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -203,7 +203,7 @@
                                 "description": "An operating system shall give the possibility to reset the product's configuration to a secure base state.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -213,7 +213,7 @@
                                 "description": "An operating system shall give an easy opt-out of automated security updates.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -223,7 +223,7 @@
                                 "description": "An operating system shall give an option to temporarily postpone automatic security updates.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -233,7 +233,7 @@
                                 "description": "An operating system shall give the possibility to opt-out of automatic security related monitoring and logging.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -243,7 +243,7 @@
                                 "description": "An operating system shall give the possibility to securely and permanently remove user data and settings.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -266,7 +266,7 @@
                                 "description": "The accompanying documentation should include the name, registered trade name or registered trade mark of the manufacturer, the postal address or other digital contact as well as, where available the website at which the manufacturer can be contacted.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -276,7 +276,7 @@
                                 "description": "The accompanying documentation should a single point of contact for vulnerability receipt or publication as well as the manufacturer's vulnerability disclosure contact.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -286,7 +286,7 @@
                                 "description": "The accompanying documentation should include name and type of the product for unique identification.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -296,7 +296,7 @@
                                 "description": "The accompanying documentation should the include intended purpose of the product and essential functionalities and information about the security properties.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -306,7 +306,7 @@
                                 "description": "The accompanying documentation should include any known or foreseeable circumstance, related to the use of the product in accordance with its intended purpose or under conditions of reasonably foreseeable misuse, which may lead to significant cybersecurity risks.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -316,7 +316,7 @@
                                 "description": "The accompanying documentation should include the EU declaration of conformity or a simplified version of it containing the internet address on where to access the full version.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -326,7 +326,7 @@
                                 "description": "The accompanying documentation should include information about the extend of the (security related) support.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -343,7 +343,7 @@
                                 "description": "Necessary measures during initial commissioning and throughout the lifetime of the product to ensure its secure use.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -353,7 +353,7 @@
                                 "description": "How changes to the product can affect the security of data.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -363,7 +363,7 @@
                                 "description": "How security-relevant updates can be installed.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -373,7 +373,7 @@
                                 "description": "Secure decommissioning of the product.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -383,7 +383,7 @@
                                 "description": "How the default setting enabling the automatic installation of security updates can be turned off.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -393,7 +393,7 @@
                                 "description": "Where the product is intended for integration into other products with digital elements, the information necessary for the integrator to comply with the essential requirements of this Regulation.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "high"
@@ -416,7 +416,7 @@
                                 "description": "The technical documentation should include a general product description, including the product's purpose, software versions for compliance, hardware visuals, and user instructions.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -426,7 +426,7 @@
                                 "description": "The technical documentation should include a design and process overview, detailing the design, development, vulnerability management, production, and monitoring processes.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -436,7 +436,7 @@
                                 "description": "The technical documentation should include a cybersecurity risk assessment, evaluating cybersecurity risks and compliance with essential requirements.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -446,7 +446,7 @@
                                 "description": "The technical documentation should include information about the determination of the support period.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -456,7 +456,7 @@
                                 "description": "The technical documentation should include standards and solutions, listing applied standards, specifications, or cybersecurity certifications, including alternative solutions for non-applied standards.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -466,7 +466,7 @@
                                 "description": "The technical documentation should include conformity testing reports, documenting tests for product conformity and vulnerability management effectiveness.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -476,7 +476,7 @@
                                 "description": "The technical documentation should include a copy of the EU Declaration of Conformity.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -499,7 +499,7 @@
                                 "description": "Name and type and any additional information enabling the unique identification of the product.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -509,7 +509,7 @@
                                 "description": "Name and address of the manufacturer or his authorised representative.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -519,7 +519,7 @@
                                 "description": "A statement that the EU declaration of conformity is issued under the sole responsibility of the provider.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -529,7 +529,7 @@
                                 "description": "Object of the declaration (identification of the product allowing traceability. It may include a photograph, where appropriate).",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -539,7 +539,7 @@
                                 "description": "A statement that the object of the declaration described above is in conformity with the relevant Union harmonisation legislation.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -549,7 +549,7 @@
                                 "description": "References to any relevant harmonised standards used or any other common specification or cybersecurity certification in relation to which conformity is declared.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -559,7 +559,7 @@
                                 "description": "Where applicable, the name and number of the notified body, a description of the conformity assessment procedure performed and identification of the certificate issued.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"
@@ -569,7 +569,7 @@
                                 "description": "Additional information about the signature in the name of the institution/manufacturer, the date and the place of issue as well as the signature of the issuing person and the person's function.",
                                 "metrics": [
                                     {
-                                        "id": "PlaceholderMetric"
+                                        "id": "Placeholder"
                                     }
                                 ],
                                 "assurance_level": "substantial"

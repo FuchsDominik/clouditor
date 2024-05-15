@@ -11,5 +11,5 @@ applicable {
 }
 
 compliant {
-	compare(data.operator, data.target_value, false)
+	compare(data.operator, data.target_value, true)
 }
