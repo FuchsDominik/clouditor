@@ -1,13 +1,15 @@
 package clouditor.metrics.placeholder
 import data.clouditor.compare
-import input.operatingSystem as os
+
+import input.type as types
 
 default compliant = false
 
 default applicable = false
 
 applicable {
-	os
+	some i
+    types[i] == "OperatingSystem"
 }
 
 compliant {

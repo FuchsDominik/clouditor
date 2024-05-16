@@ -228,7 +228,7 @@ func NewService(opts ...service.Option[*Service]) *Service {
 		Events:            make(chan *DiscoveryEvent),
 		csID:              config.DefaultCloudServiceID,
 		authz:             &service.AuthorizationStrategyAllowAll{},
-		discoveryInterval: 60 * time.Minute, // Default discovery interval is 5 minutes -> Changed to 60 minutes to not trigger vulnerability scans too often
+		discoveryInterval: 1440 * time.Minute, // Default discovery interval is 5 minutes -> Changed to 1 day to not trigger vulnerability scans too often
 	}
 
 	// Apply any options
@@ -460,7 +460,7 @@ func (svc *Service) StartDiscovery(discoverer discovery.Discoverer) {
 		// Get Evidence Store stream
 		channel, err := svc.assessmentStreams.GetStream(svc.assessment.Target, "Assessment", svc.initAssessmentStream, svc.assessment.Opts...)
 		if err != nil {
-			err = fmt.Errorf("could not get stream to assessment service (%s): %w", svc.assessment.Target, err) //TODO: Current Error!
+			err = fmt.Errorf("could not get stream to assessment service (%s): %w", svc.assessment.Target, err)
 			log.Error(err)
 			continue
 		}

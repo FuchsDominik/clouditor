@@ -143,7 +143,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "SecMon-01.3",
@@ -269,7 +269,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-01.2",
@@ -279,7 +279,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-01.3",
@@ -289,7 +289,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-01.4",
@@ -299,7 +299,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-01.5",
@@ -309,7 +309,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-01.6",
@@ -319,7 +319,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-01.7",
@@ -329,7 +329,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             }
                         ]
                     },
@@ -346,7 +346,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-02.2",
@@ -356,7 +356,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-02.3",
@@ -366,7 +366,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-02.4",
@@ -376,7 +376,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-02.5",
@@ -386,7 +386,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             },
                             {
                                 "id": "AccDoc-02.6",
@@ -396,7 +396,7 @@
                                         "id": "Placeholder"
                                     }
                                 ],
-                                "assurance_level": "high"
+                                "assurance_level": "substantial"
                             }
                         ]
                     }
