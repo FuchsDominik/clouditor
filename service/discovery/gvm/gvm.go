@@ -85,7 +85,7 @@ func (d *gvmDiscovery) List() (list []ontology.IsResource, err error) {
 func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResource, err error) {
 
 	os := &ontology.OperatingSystem{
-		Id:              "OperatingSystemID",
+		Id:              "linuxOS",
 		Name:            "Ubuntu",
 		Vulnerabilities: []*ontology.Vulnerability{},
 		Raw:             "This is the raw object of the operating system",
@@ -102,8 +102,6 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 		fmt.Println("Error reading kev catalog:", err)
 	}
 
-	fmt.Println("kev catalog length: ", len(data))
-
 	// Map the xml structure to ontology structure
 	for _, result := range results {
 		vul := &ontology.Vulnerability{}
@@ -113,6 +111,7 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 		vul.Severity = float32(result.Severity) // Convert int to float32
 		vul.Threat = result.Threat
 		vul.Family = result.NVT.Family
+
 		// Cve specific
 		vul.Exploitable = false
 		// vul.Cve = [] // TODO: Add CVEs as array
@@ -146,21 +145,19 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 
 func (d *gvmDiscovery) collectEvidences() (results []Result, err error) {
 
+	// Get the targetId for the predefined IP-address
 	targetId, err := getTargetId()
-
 	if err != nil {
 		fmt.Printf("Error while looking for target: %v", err)
 		return
 	}
-	fmt.Println("TargetId: ", targetId)
 
+	// Get the configId of Full and fast Ports
 	configId, err := getConfigId()
-
 	if err != nil {
 		fmt.Printf("Error while looking for config: %v", err)
 		return
 	}
-	fmt.Println("ConfigId: ", configId)
 
 	// Generate a random hash for the name of the task, 16 characters long,
 	// or a default hash if something went wrong
@@ -170,26 +167,26 @@ func (d *gvmDiscovery) collectEvidences() (results []Result, err error) {
 		filename = "123456789abcdefg"
 	}
 
+	// Create the scan task and get the corresponding taskId
 	taskId, err := createScanTask(filename, targetId, configId)
 	if err != nil {
 		fmt.Printf("Error while creating the task: %v", err)
 		return
 	}
-	fmt.Println("TaskId: ", taskId)
 
+	// Start the scan and get the reportId
 	reportId, err := startTask(taskId)
 	if err != nil {
 		fmt.Printf("Error while starting the task: %v", err)
 		return
 	}
-	fmt.Println("Started task, report Id: ", reportId)
 
+	// Get the report format id - Anonymous XML
 	reportFormatId, err := getReportFormatId()
 	if err != nil {
 		fmt.Printf("Error while getting the report format: %v", err)
 		return
 	}
-	fmt.Println("reportFormatId: ", reportFormatId)
 
 	// Regularly check for the results
 	reportChan := make(chan GetReportsResponse)
@@ -207,39 +204,6 @@ func (d *gvmDiscovery) collectEvidences() (results []Result, err error) {
 			return
 		}
 	}
-
-	// Go on to parse the report
-	/*
-
-		report := Report{}
-		// Unmarshal the XML content to the struct
-		err = xml.Unmarshal(reportText, &report)
-		if err != nil {
-			fmt.Printf("Error while parsing the report: %v", err)
-			return
-		}
-
-		results = report.Report.Results.Result
-
-		// Seems ok, Authenticated Scan / LSC Info Consolidation (Linux/Unix SSH Login)
-		// fmt.Println("First Name: ", results[0].Name)
-		fmt.Println("results: ", len(results))
-
-		// Only keep the CVE references
-		for i := range results {
-			var cves []Ref
-			// fmt.Println("Refs: ", len(results[i].NVT.Refs.Ref))
-			for _, ref := range results[i].NVT.Refs.Ref {
-				if ref.Type == "cve" {
-					cves = append(cves, ref)
-				}
-			}
-			results[i].NVT.Refs.Ref = cves
-		}
-
-		// fmt.Println("First CVE: ", results[0].NVT.Refs.Ref[0].ID) // -> Throws error, since 1. result does not have a CVE reference
-	*/
-	return
 }
 
 // loadFileAsString reads the entire file content as a single string
@@ -311,6 +275,7 @@ func getConfigId() (string, error) {
 		}
 	}
 
+	fmt.Println("Could not find correct scan configuration.")
 	return "", nil
 }
 
@@ -324,10 +289,6 @@ func createScanTask(filename string, targetId string, configId string) (string, 
 	if err != nil {
 		fmt.Println("Could not run create task command: ", err)
 	}
-
-	target := string(out)
-
-	fmt.Println("Output:\n", target)
 
 	var response CreateTaskResponse
 
@@ -465,9 +426,6 @@ func monitorScan(reportChan chan<- GetReportsResponse, errChan chan<- error, tas
 
 				results := response.Report.Results
 				fmt.Println("Unmarshalling worked! Here is the length of the results: ", len(results))
-				// Seems ok, Authenticated Scan / LSC Info Consolidation (Linux/Unix SSH Login)
-				// fmt.Println("First Name: ", results[0].Name) // Ok, Operating System (OS) End of Life (EOL) Detection
-				// fmt.Println("results: ", len(results))
 				count := 0
 
 				// Only keep the CVE references
