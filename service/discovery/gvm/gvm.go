@@ -85,8 +85,10 @@ func (d *gvmDiscovery) List() (list []ontology.IsResource, err error) {
 func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResource, err error) {
 
 	os := &ontology.OperatingSystem{
+		Id:              "OperatingSystemID",
 		Name:            "Ubuntu",
 		Vulnerabilities: []*ontology.Vulnerability{},
+		Raw:             "This is the raw object of the operating system",
 	}
 
 	results, err := d.collectEvidences()
@@ -119,12 +121,10 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 			// vul.Cve = ref.ID
 
 			// Check if the vulnerability has been exploited in the past
-			if data != "" && strings.Contains(data, ref.ID) { // Maybe check for "CVE-2021-1234" instead of CVE-2021-1234 to make sure we catch the whole CVE
+			if data != "" && strings.Contains(data, "\""+ref.ID+"\"") {
 				vul.Exploitable = true
 			}
 		}
-		fmt.Println("Vulnerability name in the end: ", vul.Name)
-		fmt.Println("And the exploitability is: ", vul.Exploitable)
 		os.Vulnerabilities = append(os.Vulnerabilities, vul)
 	}
 
@@ -139,6 +139,8 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 		fmt.Printf("%v\n", os.Vulnerabilities[i]) // TODO: Does not show the exploitability
 	}
 
+	fmt.Println("The finished OS's Vulns:")
+	fmt.Println(os.GetVulnerabilities())
 	return []ontology.IsResource{os}, err
 }
 
