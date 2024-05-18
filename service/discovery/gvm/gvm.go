@@ -97,10 +97,16 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 	}
 
 	// We use the KEV catalog to check if the vulnerability has been exploited in the past
-	data, err := loadFileAsString("/Users/dominik.fuchs/Documents/clouditor/internal/kevcatalog/kevcatalog.json") //TODO: Update catalog regurarly to get updated CVEs
+	cmd := exec.Command("bash", "-c", `curl https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json`)
+
+	// Execute the command and collect the output
+	out, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println("Error reading kev catalog:", err)
 	}
+
+	// Convert the output from []byte to a string
+	data := string(out)
 
 	// Map the xml structure to ontology structure
 	for _, result := range results {
@@ -361,7 +367,7 @@ func monitorScan(reportChan chan<- GetReportsResponse, errChan chan<- error, tas
 	for {
 		select {
 		case <-ticker.C:
-			cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_tasks/>"'`) //TODO: If this command does not find the task, add the filter filter_string=\"rows=-1\"
+			cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_tasks filter_string=\"rows=-1\"/>"'`)
 
 			// Execute the command and collect the output
 			out, err := cmd.CombinedOutput()
