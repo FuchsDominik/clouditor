@@ -303,7 +303,6 @@ func (svc *Service) Start(ctx context.Context, req *discovery.StartDiscoveryRequ
 	}
 
 	// Check if cloud_service_id in the service is within allowed or one can access *all* the cloud services
-	// TODO: Check JWT Token for specific gvm allowance
 	if !svc.authz.CheckAccess(ctx, service.AccessUpdate, svc) {
 		return nil, service.ErrPermissionDenied
 	}
@@ -358,9 +357,7 @@ func (svc *Service) Start(ctx context.Context, req *discovery.StartDiscoveryRequ
 				opts = append(opts, csaf.WithProviderDomain(domain))
 			}
 			svc.discoverers = append(svc.discoverers, csaf.NewTrustedProviderDiscovery(opts...))
-		// TODO: Implement Greenbone
 		case provider == ProviderGreenbone:
-			// TODO: Do some authentication for Greenbone?
 			svc.discoverers = append(svc.discoverers, gvm.NewGvmDiscovery(svc.csID))
 		default:
 			newError := fmt.Errorf("provider %s not known", provider)

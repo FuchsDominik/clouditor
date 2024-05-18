@@ -1,6 +1,7 @@
 package clouditor.metrics.no_known_vulnerabilities
 
 import data.clouditor.compare
+import future.keywords.every
 import input.vulnerabilities as vul
 import input.type as types
 
@@ -10,8 +11,11 @@ default applicable = false
 
 applicable {
 	vul
-	some i
-    types[i] != "OperatingSystem"
+
+	is_array(types)
+     every t in types {
+    	t == "OperatingSystem"
+    }
 }
 
 compliant {

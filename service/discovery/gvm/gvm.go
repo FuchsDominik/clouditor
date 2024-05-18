@@ -132,14 +132,6 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 	if err != nil {
 		log.Fatal("Error while evaluating vulnerabilities:", err)
 	}
-
-	for i := 0; i < len(os.Vulnerabilities); i++ {
-		fmt.Println("Operating System's vulnerability " + fmt.Sprint(i+1) + ": ")
-		fmt.Printf("%v\n", os.Vulnerabilities[i]) // TODO: Does not show the exploitability
-	}
-
-	fmt.Println("The finished OS's Vulns:")
-	fmt.Println(os.GetVulnerabilities())
 	return []ontology.IsResource{os}, err
 }
 
@@ -369,7 +361,7 @@ func monitorScan(reportChan chan<- GetReportsResponse, errChan chan<- error, tas
 	for {
 		select {
 		case <-ticker.C:
-			cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_tasks/>"'`)
+			cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_tasks/>"'`) //TODO: If this command does not find the task, add the filter filter_string=\"rows=-1\"
 
 			// Execute the command and collect the output
 			out, err := cmd.CombinedOutput()
@@ -406,7 +398,7 @@ func monitorScan(reportChan chan<- GetReportsResponse, errChan chan<- error, tas
 			if taskFound && finished {
 
 				// Simulate report processing
-				cmdSecond := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_reports report_id=\"%s\" filter=\"apply_overrides=0 levels=hmlgf min_qod=70 first=1 sort-reverse=severity ignore_pagination=1\" details=\"1\" format_id=\"%s\"/>"'`, reportId, reportFormatId))
+				cmdSecond := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_reports report_id=\"%s\" filter=\"rows=-1\" details=\"1\" format_id=\"%s\"/>"'`, reportId, reportFormatId))
 
 				// Execute the command and collect the output
 				out, err = cmdSecond.CombinedOutput()
