@@ -37,6 +37,7 @@ import (
 
 	"clouditor.io/clouditor/v2/api/discovery"
 	"clouditor.io/clouditor/v2/api/ontology"
+	"clouditor.io/clouditor/v2/internal/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -120,7 +121,7 @@ func (d *gvmDiscovery) discoverOperatingSystem() (providers []ontology.IsResourc
 
 		// Cve specific
 		vul.Exploitable = false
-		// vul.Cve = [] // TODO: Add CVEs as array
+		// vul.Cve = [] // TODO: Add CVEs as array to use for other requirements
 
 		for _, ref := range result.NVT.Refs {
 			// vul.Cve = ref.ID
@@ -224,7 +225,7 @@ func generateRandomHex(n int) (string, error) {
 }
 
 func getTargetId() (string, error) {
-	cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_targets/>"'`)
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<get_targets/>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword))
 
 	// Execute the command and collect the output
 	out, err := cmd.CombinedOutput()
@@ -240,8 +241,8 @@ func getTargetId() (string, error) {
 		return "", err
 	}
 
-	if response.Targets.Hosts == "192.168.178.102" {
-		fmt.Println("ID of target with IP '192.168.178.102':", response.Targets.ID)
+	if response.Targets.Hosts == config.TargetIPAdress {
+		fmt.Printf("ID of target with IP '%s': %s\n", config.TargetIPAdress, response.Targets.ID)
 	} else {
 		fmt.Println("No target with the specified IP found.")
 	}
@@ -249,7 +250,7 @@ func getTargetId() (string, error) {
 }
 
 func getConfigId() (string, error) {
-	cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_configs/>"'`)
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<get_configs/>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword))
 
 	// Execute the command and collect the output
 	out, err := cmd.CombinedOutput()
@@ -278,9 +279,9 @@ func getConfigId() (string, error) {
 }
 
 func createScanTask(filename string, targetId string, configId string) (string, error) {
-	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<create_task><name>%s</name> \
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<create_task><name>%s</name> \
 	<target id=\"%s\"></target> \
-	<config id=\"%s\"></config></create_task>"'`, filename, targetId, configId))
+	<config id=\"%s\"></config></create_task>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword, filename, targetId, configId))
 
 	// Execute the command and collect the output
 	out, err := cmd.CombinedOutput()
@@ -306,7 +307,7 @@ func createScanTask(filename string, targetId string, configId string) (string, 
 }
 
 func startTask(taskId string) (string, error) {
-	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<start_task task_id=\"%s\"/>"'`, taskId))
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<start_task task_id=\"%s\"/>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword, taskId))
 
 	// Execute the command and collect the output
 	out, err := cmd.CombinedOutput()
@@ -332,7 +333,7 @@ func startTask(taskId string) (string, error) {
 }
 
 func getReportFormatId() (string, error) {
-	cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_report_formats/>"'`)
+	cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<get_report_formats/>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword))
 
 	// Execute the command and collect the output
 	out, err := cmd.CombinedOutput()
@@ -367,7 +368,7 @@ func monitorScan(reportChan chan<- GetReportsResponse, errChan chan<- error, tas
 	for {
 		select {
 		case <-ticker.C:
-			cmd := exec.Command("bash", "-c", `ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_tasks filter_string=\"rows=-1\"/>"'`)
+			cmd := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<get_tasks filter_string=\"rows=-1\"/>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword))
 
 			// Execute the command and collect the output
 			out, err := cmd.CombinedOutput()
@@ -404,7 +405,7 @@ func monitorScan(reportChan chan<- GetReportsResponse, errChan chan<- error, tas
 			if taskFound && finished {
 
 				// Simulate report processing
-				cmdSecond := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm kali@192.168.178.112 -f 'gvm-cli --gmp-username admin --gmp-password ff4e1015-ccdf-476d-baad-13bb657f552e socket --xml "<get_reports report_id=\"%s\" filter=\"rows=-1\" details=\"1\" format_id=\"%s\"/>"'`, reportId, reportFormatId))
+				cmdSecond := exec.Command("bash", "-c", fmt.Sprintf(`ssh -i ~/.ssh/gvm %s@%s -f 'gvm-cli --gmp-username %s --gmp-password %s socket --xml "<get_reports report_id=\"%s\" filter=\"rows=-1\" details=\"1\" format_id=\"%s\"/>"'`, config.VMUsername, config.VMIpAddress, config.GMPUsername, config.GMPPassword, reportId, reportFormatId))
 
 				// Execute the command and collect the output
 				out, err = cmdSecond.CombinedOutput()

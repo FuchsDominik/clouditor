@@ -101,8 +101,14 @@ const (
 	DefaultCSAFDomain                          = ""
 	DefaultDashboardURL                        = "http://localhost:8080"
 	DefaultLogLevel                            = "info"
+	EnvPrefix                                  = "CLOUDITOR"
 
-	EnvPrefix = "CLOUDITOR"
+	// GVM specific constants
+	VMUsername     = "kali"
+	VMIpAddress    = "192.168.178.112"
+	GMPUsername    = "admin"
+	GMPPassword    = "ff4e1015-ccdf-476d-baad-13bb657f552e"
+	TargetIPAdress = "192.168.178.102"
 )
 
 var (
