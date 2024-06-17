@@ -778,7 +778,7 @@
   {
     "id": "NoExploitableVulnerabilities",
     "name": "No known exploitable vulnerabilities",
-    "description": "This metric is used to assess if there are known exploitable vulnerabilities in the operating system",
+    "description": "This metric is used to assess if there are known exploitable vulnerabilities in the evaluated product",
     "category": "Vulnerabilities",
     "scale": 1,
     "range": {
@@ -792,8 +792,8 @@
   },
   {
     "id": "NoConfigVulnerabilities",
-    "name": "No vulnerabilities in the operating system configuration",
-    "description": "This metric is used to assess if there are vulnerabilities in the operating system configuration",
+    "name": "No vulnerabilities in the evaluated product's configuration",
+    "description": "This metric is used to assess if there are vulnerabilities in the evaluated product's configuration",
     "category": "Vulnerabilities",
     "scale": 1,
     "range": {
@@ -807,8 +807,8 @@
   },
   {
     "id": "NoPEVulnerabilities",
-    "name": "No Privilege Escalation vulnerabilities present in the operating system",
-    "description": "This metric is used to assess if there are Privilege Escalation vulnerabilities in the operating system",
+    "name": "No Privilege Escalation vulnerabilities present in the evaluated product",
+    "description": "This metric is used to assess if there are Privilege Escalation vulnerabilities in the evaluated product",
     "category": "Vulnerabilities",
     "scale": 1,
     "range": {
@@ -823,7 +823,7 @@
   {
     "id": "NoPortVulnerabilities",
     "name": "No unessential port exposure",
-    "description": "This metric is used to assess if the operating system opens unused or vulnerable ports",
+    "description": "This metric is used to assess if the evaluated product opens unused or vulnerable ports",
     "category": "Vulnerabilities",
     "scale": 1,
     "range": {

@@ -330,67 +330,10 @@
                                     }
                                 ],
                                 "assurance_level": "important"
-                            }
-                        ]
-                    },
-                    {
-                        "id": "AccDoc-02",
-                        "name": "Instruction reference",
-                        "description": "The accompanying documentation should include instructions or an internet address on where to find information about how to perform particular tasks.",
-                        "controls": [
-                            {
-                                "id": "AccDoc-02.1",
-                                "description": "Necessary measures during initial commissioning and throughout the lifetime of the product to ensure its secure use.",
-                                "metrics": [
-                                    {
-                                        "id": "Placeholder"
-                                    }
-                                ],
-                                "assurance_level": "important"
                             },
                             {
-                                "id": "AccDoc-02.2",
-                                "description": "How changes to the product can affect the security of data.",
-                                "metrics": [
-                                    {
-                                        "id": "Placeholder"
-                                    }
-                                ],
-                                "assurance_level": "important"
-                            },
-                            {
-                                "id": "AccDoc-02.3",
-                                "description": "How security-relevant updates can be installed.",
-                                "metrics": [
-                                    {
-                                        "id": "Placeholder"
-                                    }
-                                ],
-                                "assurance_level": "important"
-                            },
-                            {
-                                "id": "AccDoc-02.4",
-                                "description": "Secure decommissioning of the product.",
-                                "metrics": [
-                                    {
-                                        "id": "Placeholder"
-                                    }
-                                ],
-                                "assurance_level": "important"
-                            },
-                            {
-                                "id": "AccDoc-02.5",
-                                "description": "How the default setting enabling the automatic installation of security updates can be turned off.",
-                                "metrics": [
-                                    {
-                                        "id": "Placeholder"
-                                    }
-                                ],
-                                "assurance_level": "important"
-                            },
-                            {
-                                "id": "AccDoc-02.6",
-                                "description": "Where the product is intended for integration into other products with digital elements, the information necessary for the integrator to comply with the essential requirements of this Regulation.",
+                                "id": "AccDoc-01.8",
+                                "description": "The accompanying documentation should include instructions or an internet address on where to find information about how to perform particular tasks.",
                                 "metrics": [
                                     {
                                         "id": "Placeholder"
